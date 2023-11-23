@@ -1,14 +1,6 @@
-version: '2.4'
+version: '3'
 
 services:
-
-  postgresql:
-    image: postgres:14-alpine
-    ports:
-      - "5432:5432"
-    volumes:
-      - data:/var/lib/postgresql/data
-
   rabbitmq:
     image: rabbitmq:3.10-rc-management-alpine
     ports:
@@ -17,61 +9,39 @@ services:
       # HTTP management UI
       - "15672:15672"
 
-  auth:
+  producer:
     build:
-      context: ./auth
+      context: ./producer
       args:
         - NODE_ENV=development
-      target: dev
     ports:
       - "3001:3001"
     volumes:
-      - ./auth:/app/
+      - ./producer:/usr/src/app
     environment:
-      - SERVICE=auth
+      - SERVICE=producer
     env_file:
-      - ./auth/.env
+      - ./producer/.env
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
     depends_on:
-      - postgresql
       - rabbitmq
 
-  products:
+  consumer:
     build:
-      context: ./products
+      context: ./consumer
       args:
         - NODE_ENV=development
-      target: dev
     ports:
       - "3002:3002"
     volumes:
-      - ./products:/app/
+      - ./consumer:/usr/src/app
     environment:
-      - SERVICE=products
+      - SERVICE=consumer
     env_file:
-      - ./products/.env
+      - ./consumer/.env
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
     depends_on:
-      - postgresql
       - rabbitmq
 
-  orders:
-    build:
-      context: ./orders
-      args:
-        - NODE_ENV=development
-      target: dev
-    ports:
-      - "3003:3003"
-    volumes:
-      - ./orders:/app/
-    environment:
-      - SERVICE=orders
-    env_file:
-      - ./orders/.env
-    depends_on:
-      - postgresql
-      - rabbitmq
-
-volumes:
-  data:
 
 
