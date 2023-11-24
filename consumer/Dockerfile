@@ -1,5 +1,5 @@
 # FROM node:14-slim also works here
-FROM node:14-alpine as base
+FROM node:18-alpine as base
 
 # Create and set the working directory
 WORKDIR /usr/src/app

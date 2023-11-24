@@ -8,6 +8,20 @@ services:
       - "5672:5672"
       # HTTP management UI
       - "15672:15672"
+    networks:
+      - poc-sms-network
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on:
+      - producer
+    networks:
+      - poc-sms-network
 
   producer:
     build:
@@ -25,6 +39,8 @@ services:
     command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
     depends_on:
       - rabbitmq
+    networks:
+      - poc-sms-network
 
   consumer:
     build:
@@ -42,6 +58,14 @@ services:
     command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
     depends_on:
       - rabbitmq
+    networks:
+      - poc-sms-network
+
+networks:
+  poc-sms-network:
+    driver: bridge
+
+    
 
 
 
