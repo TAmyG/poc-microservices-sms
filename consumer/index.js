@@ -6,7 +6,7 @@ let channel;
 
 const queueName = 'SMS-MS';
 const from = 'Vonage APIs';
-const connectToApi = process.env.CONNECT == 1 ? true : false;
+const connectToApi = true;//process.env.CONNECT == 1 ? true : false;
 const vonage = new Vonage({
   apiKey: "f0ce0a13",
   apiSecret: "w8PR4Jl2F9URC64d"

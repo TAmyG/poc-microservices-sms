@@ -36,7 +36,7 @@ services:
       - SERVICE=producer
     env_file:
       - ./producer/.env
-    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=60 -- node index.js'
     depends_on:
       - rabbitmq
     networks:
@@ -55,7 +55,7 @@ services:
       - SERVICE=consumer
     env_file:
       - ./consumer/.env
-    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node index.js'
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=60 -- node index.js'
     depends_on:
       - rabbitmq
     networks:
